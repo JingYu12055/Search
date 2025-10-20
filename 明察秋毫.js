@@ -1,12 +1,66 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const form = document.querySelector('.search-box');
-    const input = form.querySelector('input[type="search"]');
-    const resultsContainer = document.querySelector('.results');
-    const resultsCounter = document.querySelector('header p');
+
+    // 📜 檢查是否在搜尋紀錄頁
+    const historyList = document.querySelector('.history-list');
+    const clearBtn = document.querySelector('.clear-history');
 
     const apiKey = 'AIzaSyD9A4YhuBUa4C0H-qgIBp7xwhJF46HVEqo';
     const cx = '7195047f108cc4312';
 
+
+    if (historyList && clearBtn) {
+        // ✅ 這部分只在 history.html 執行
+        let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+        renderHistory();
+
+        function renderHistory() {
+            historyList.innerHTML = '';
+            if (searchHistory.length === 0) {
+                historyList.innerHTML = '<li class="no-history">目前沒有搜尋紀錄</li>';
+                return;
+            }
+            searchHistory.forEach(term => {
+                const li = document.createElement('li');
+                li.textContent = term;
+                li.title = '點擊以返回搜尋該關鍵字';
+                li.addEventListener('click', () => {
+                    window.location.href = `index.html?search=${encodeURIComponent(term)}`;
+                });
+
+                const delBtn = document.createElement('button');
+                delBtn.textContent = '✖';
+                delBtn.className = 'delete-btn';
+                delBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    searchHistory = searchHistory.filter(t => t !== term);
+                    localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+                    renderHistory();
+                });
+
+                li.appendChild(delBtn);
+                historyList.appendChild(li);
+            });
+        }
+
+        clearBtn.addEventListener('click', () => {
+            if (confirm('確定要清除所有搜尋紀錄嗎？')) {
+                searchHistory = [];
+                localStorage.removeItem('searchHistory');
+                renderHistory();
+            }
+        });
+    }
+
+    // ✅ 以下是主搜尋頁 index.html 的程式
+    const form = document.querySelector('.search-box');
+    const input = form?.querySelector('input[type="search"]');
+    const resultsContainer = document.querySelector('.results');
+    const resultsCounter = document.querySelector('header p');
+
+    if (!form) return; // 🧱 若不是搜尋頁，直接跳過
+
+    const apiKey = 'YOUR_GOOGLE_API_KEY';
+    const cx = 'YOUR_SEARCH_ENGINE_ID';
     let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
 
     form.addEventListener('submit', function (event) {
