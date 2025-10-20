@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const resultsContainer = document.querySelector('.results');
     const resultsCounter = document.querySelector('header p');
 
-    // 🔑 填入你的 Google Custom Search API Key & CX
     const apiKey = 'AIzaSyD9A4YhuBUa4C0H-qgIBp7xwhJF46HVEqo';
     const cx = '7195047f108cc4312';
 
